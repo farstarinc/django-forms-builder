@@ -9,6 +9,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 
 from forms_builder.forms import fields
 from forms_builder.forms import settings
+from django.conf import settings as django_settings
 
 
 STATUS_DRAFT = 1
@@ -69,7 +70,8 @@ class AbstractForm(models.Model):
         help_text=_("If checked, only logged in users can view the form"))
     send_email = models.BooleanField(_("Send confirmation email"), default=True, help_text=
         _("If checked, the person entering the form will be sent an email"))
-    email_from = models.EmailField(_("From address"), blank=True,
+    email_from = models.EmailField(_("From address"), blank=True, 
+        default=django_settings.DEFAULT_FROM_EMAIL,
         help_text=_("The address the email will be sent from"))
     email_copies = models.CharField(_("Send copies to"), blank=True,
         help_text=_("One or more email addresses, separated by commas"),
