@@ -246,3 +246,12 @@ class FormEntry(AbstractFormEntry):
 
 class FieldEntry(AbstractFieldEntry):
     entry = models.ForeignKey("FormEntry", related_name="fields")
+
+if settings.USE_DJANGO_CMS:
+    from cms.models import CMSPlugin
+
+    class CMSForm(CMSPlugin):
+        form = models.ForeignKey(Form)
+
+        def __unicode__(self):
+            return self.form.__unicode__()

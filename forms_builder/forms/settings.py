@@ -18,6 +18,11 @@ USE_HTML5 = getattr(settings, "FORMS_BUILDER_USE_HTML5", True)
 USE_SITES = getattr(settings, "FORMS_BUILDER_USE_SITES",
                     "django.contrib.sites" in settings.INSTALLED_APPS)
 
+# Boolean controlling whether or not to provide a django-cms plugin
+USE_DJANGO_CMS = getattr(settings, "FORMS_BUILDER_USE_DJANGO_CMS", 
+                    "cms" in settings.INSTALLED_APPS)
+
+
 # Char to start a quoted choice with.
 CHOICES_QUOTE = getattr(settings, "FORMS_BUILDER_CHOICES_QUOTE", "`")
 
@@ -26,3 +31,4 @@ CHOICES_UNQUOTE = getattr(settings, "FORMS_BUILDER_CHOICES_UNQUOTE", "`")
 
 # Char to use as a field delimiter when exporting form responses as CSV.
 CSV_DELIMITER = getattr(settings, "FORMS_BUILDER_CSV_DELIMITER", ",")
+

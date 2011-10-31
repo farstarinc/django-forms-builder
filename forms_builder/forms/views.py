@@ -22,6 +22,20 @@ def form_detail(request, slug, template="forms/form_detail.html"):
     if USE_SITES:
         published = published.filter(sites=Site.objects.get_current())
     form = get_object_or_404(published, slug=slug)
+    context = process_form(request, form)
+    return render_to_response(template, context, RequestContext(request))
+
+
+def form_sent(request, slug, template="forms/form_sent.html"):
+    """
+    Show the response message.
+    """
+    published = Form.objects.published(for_user=request.user)
+    form = get_object_or_404(published, slug=slug)
+    context = {"form": form}
+    return render_to_response(template, context, RequestContext(request))
+
+def process_form(request, form, context={}, is_cms_plugin=False):
     if form.login_required and not request.user.is_authenticated():
         return redirect("%s?%s=%s" % (settings.LOGIN_URL, REDIRECT_FIELD_NAME,
                         urlquote(request.get_full_path())))
@@ -55,16 +69,9 @@ def form_detail(request, slug, template="forms/form_detail.html"):
                     msg.attach(f.name, f.read())
                 msg.send()
             form_valid.send(sender=request, form=form_for_form, entry=entry)
-            return redirect(reverse("form_sent", kwargs={"slug": form.slug}))
-    context = {"form": form, "form_for_form": form_for_form}
-    return render_to_response(template, context, RequestContext(request))
-
-
-def form_sent(request, slug, template="forms/form_sent.html"):
-    """
-    Show the response message.
-    """
-    published = Form.objects.published(for_user=request.user)
-    form = get_object_or_404(published, slug=slug)
-    context = {"form": form}
-    return render_to_response(template, context, RequestContext(request))
+            if is_cms_plugin:
+                context['form_sent'] = True
+            else:
+                return redirect(reverse("form_sent", kwargs={"slug": form.slug}))
+    context.update({"form": form, "form_for_form": form_for_form})
+    return context
